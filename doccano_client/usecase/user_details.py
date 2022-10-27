@@ -54,3 +54,13 @@ class UserDetailsUseCase:
         """
         password_change = PasswordChange(new_password=password, confirm_password=confirm_password)
         return self._user_details_repository.change_current_user_password(password_change)
+
+    def create_user(self, username: str, password: str) -> UserDetails:
+        """Create new user
+        Args:
+            username (str): the username of the user thats to be created
+            password (str): the password to set for the new user
+        Returns:
+            UserDetails: the newly created user login info
+        """
+        return self._user_details_repository.create_user(username, password)

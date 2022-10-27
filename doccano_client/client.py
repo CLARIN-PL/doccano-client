@@ -268,6 +268,16 @@ class DoccanoClient:
         """
         return self._user_repository.find_by_name(name)
 
+    def create_user(self, username: str, password: str) -> UserDetails:
+        """Create new user
+        Args:
+            username (str): the username of the user thats to be created
+            password (str): the password to set for the new user
+        Returns:
+            UserDetails: The UserDetails of the newly created user
+        """
+        return self.user_details.create_user(username=username, password=password)
+
     def list_projects(self) -> Iterator[Project]:
         """Return all projects in which you are a member.
 
