@@ -13,6 +13,8 @@ ProjectType = Literal[
     "Segmentation",
     "ImageCaptioning",
     "IntentDetectionAndSlotFilling",
+    "ArticleAnnotation",
+    "AffectiveAnnotation",
 ]
 
 
@@ -51,6 +53,12 @@ class ProjectUseCase:
         allow_overlapping: bool = False,
         grapheme_mode: bool = False,
         use_relation: bool = False,
+        is_summary_mode: bool = False,
+        is_emotions_mode: bool = False,
+        is_offensive_mode: bool = False,
+        is_humor_mode: bool = False,
+        is_others_mode: bool = False,
+        is_single_ann_view: bool = True,
         tags: Optional[List[str]] = None,
     ) -> Project:
         """Create a new project
@@ -82,6 +90,12 @@ class ProjectUseCase:
             allow_overlapping=allow_overlapping,
             grapheme_mode=grapheme_mode,
             use_relation=use_relation,
+            is_summary_mode=is_summary_mode,
+            is_emotions_mode=is_emotions_mode,
+            is_offensive_mode=is_offensive_mode,
+            is_humor_mode=is_humor_mode,
+            is_others_mode=is_others_mode,
+            is_single_ann_view=is_single_ann_view,
             tags=tags or [],
         )
         return self._repository.create(project)
@@ -99,6 +113,12 @@ class ProjectUseCase:
         allow_overlapping: bool = None,
         grapheme_mode: bool = None,
         use_relation: bool = None,
+        is_summary_mode: bool = False,
+        is_emotions_mode: bool = False,
+        is_offensive_mode: bool = False,
+        is_humor_mode: bool = False,
+        is_others_mode: bool = False,
+        is_single_ann_view: bool = True,
         tags: Optional[List[str]] = None,
     ) -> Project:
         """Update a project
@@ -137,6 +157,12 @@ class ProjectUseCase:
             allow_overlapping=allow_overlapping if allow_overlapping is not None else project.allow_overlapping,
             grapheme_mode=grapheme_mode if grapheme_mode is not None else project.grapheme_mode,
             use_relation=use_relation if use_relation is not None else project.use_relation,
+            is_summary_mode=is_summary_mode if is_summary_mode is not None else project.is_summary_mode,
+            is_emotions_mode=is_emotions_mode if is_emotions_mode is not None else project.is_emotions_mode,
+            is_offensive_mode=is_offensive_mode if is_offensive_mode is not None else project.is_offensive_mode,
+            is_humor_mode=is_humor_mode if is_humor_mode is not None else project.is_humor_mode,
+            is_others_mode=is_others_mode if is_others_mode is not None else project.is_others_mode,
+            is_single_ann_view=is_single_ann_view if is_single_ann_view is not None else project.is_single_ann_view,
             tags=tags or [],
         )
         return self._repository.update(project)

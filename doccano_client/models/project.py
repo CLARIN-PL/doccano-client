@@ -24,6 +24,8 @@ class ProjectType(str, Enum):
     SEGMENTATION = "Segmentation"
     IMAGE_CAPTIONING = "ImageCaptioning"
     INTENT_DETECTION_AND_SLOT_FILLING = "IntentDetectionAndSlotFilling"
+    ARTICLE_ANNOTATION = "ArticleAnnotation"
+    AFFECTIVE_ANNOTATION = "AffectiveAnnotation"
 
 
 class Name(ConstrainedStr):
@@ -49,6 +51,12 @@ class Project(BaseModel):
     allow_overlapping: bool = False
     grapheme_mode: bool = False
     use_relation: bool = False
+    is_summary_mode: bool = False
+    is_emotions_mode: bool = False
+    is_offensive_mode: bool = False
+    is_humor_mode: bool = False
+    is_others_mode: bool = False
+    is_single_ann_view: bool = True
     tags: List[str] = []
 
     def dict(
@@ -87,5 +95,7 @@ class Project(BaseModel):
             ProjectType.SEGMENTATION: "SegmentationProject",
             ProjectType.IMAGE_CAPTIONING: "ImageCaptioningProject",
             ProjectType.INTENT_DETECTION_AND_SLOT_FILLING: "IntentDetectionAndSlotFillingProject",
+            ProjectType.ARTICLE_ANNOTATION: "ArticleAnnotationProject",
+            ProjectType.AFFECTIVE_ANNOTATION: "AffectiveAnnotationProject",
         }
         return PROJECT_TO_RESOURCE_TYPE[self.project_type]

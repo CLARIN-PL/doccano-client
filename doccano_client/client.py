@@ -345,12 +345,18 @@ class DoccanoClient:
         allow_overlapping: bool = False,
         grapheme_mode: bool = False,
         use_relation: bool = False,
+        is_summary_mode: bool = False,
+        is_emotions_mode: bool = False,
+        is_offensive_mode: bool = False,
+        is_humor_mode: bool = False,
+        is_others_mode: bool = False,
+        is_single_ann_view: bool = True,
         tags: Optional[List[str]] = None,
     ) -> Project:
         """Create a new project. `ProjectType` is one of the
         `DocumentClassification`, `SequenceLabeling`, `Seq2seq`, `Speech2text`,
         `ImageClassification`, `BoundingBox`, `Segmentation`, `ImageCaptioning`,
-        and `IntentDetectionAndSlotFilling`.
+        `IntentDetectionAndSlotFilling`, `ArticleAnnotation`, and `AffectiveAnnotation`.
 
         Args:
             name (str): The name of the project.
@@ -379,6 +385,12 @@ class DoccanoClient:
             allow_overlapping=allow_overlapping,
             grapheme_mode=grapheme_mode,
             use_relation=use_relation,
+            is_summary_mode=is_summary_mode,
+            is_emotions_mode=is_emotions_mode,
+            is_offensive_mode=is_offensive_mode,
+            is_humor_mode=is_humor_mode,
+            is_others_mode=is_others_mode,
+            is_single_ann_view=is_single_ann_view,
             tags=tags,
         )
 
@@ -395,6 +407,12 @@ class DoccanoClient:
         allow_overlapping: bool = None,
         grapheme_mode: bool = None,
         use_relation: bool = None,
+        is_summary_mode: bool = None,
+        is_emotions_mode: bool = None,
+        is_offensive_mode: bool = None,
+        is_humor_mode: bool = None,
+        is_others_mode: bool = None,
+        is_single_ann_view: bool = None,
         tags: Optional[List[str]] = None,
     ) -> Project:
         """Update a project. `ProjectType` is one of the
@@ -431,6 +449,12 @@ class DoccanoClient:
             allow_overlapping=allow_overlapping,
             grapheme_mode=grapheme_mode,
             use_relation=use_relation,
+            is_summary_mode=is_summary_mode,
+            is_emotions_mode=is_emotions_mode,
+            is_offensive_mode=is_offensive_mode,
+            is_humor_mode=is_humor_mode,
+            is_others_mode=is_others_mode,
+            is_single_ann_view=is_single_ann_view,
             tags=tags,
         )
 
