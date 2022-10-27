@@ -24,3 +24,5 @@ class Task(str, Enum):
     IMAGE_CAPTIONING = "ImageCaptioning"
     INTENT_DETECTION_AND_SLOT_FILLING = "IntentDetectionAndSlotFilling"
     RELATION_EXTRACTION = "RelationExtraction"
+    ARTICLE_ANNOTATION = "ArticleAnnotation"
+    AFFECTIVE_ANNOTATION = "AffectiveAnnotation"

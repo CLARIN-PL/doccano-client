@@ -15,3 +15,6 @@ class Example(BaseModel):
     filename: str = ""
     upload_name: str = ""
     score: float = 100
+    order: int = 0
+    type: str = ""
+    article_id: str = ""
