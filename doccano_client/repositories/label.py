@@ -11,6 +11,7 @@ from doccano_client.models.label import (
     Segment,
     Span,
     Text,
+    Scale,
 )
 from doccano_client.repositories.base import BaseRepository
 
@@ -120,3 +121,4 @@ RelationRepository = functools.partial(LabelRepository[Relation], label_class=Re
 SegmentRepository = functools.partial(LabelRepository[Segment], label_class=Segment, resource_type="segments")
 TextRepository = functools.partial(LabelRepository[Text], label_class=Text, resource_type="texts")
 BoundingBoxRepository = functools.partial(LabelRepository[BoundingBox], label_class=BoundingBox, resource_type="bboxes")
+ScaleRepository = functools.partial(LabelRepository[Scale], label_class=Scale, resource_type="scales")

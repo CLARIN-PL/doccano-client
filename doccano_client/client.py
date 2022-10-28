@@ -15,6 +15,7 @@ from doccano_client.models.label import (
     Segment,
     Span,
     Text,
+    Scale,
 )
 from doccano_client.models.label_type import PREFIX_KEY, SUFFIX_KEY, LabelType
 from doccano_client.models.member import Member
@@ -36,11 +37,13 @@ from doccano_client.repositories.label import (
     SegmentRepository,
     SpanRepository,
     TextRepository,
+    ScaleRepository,
 )
 from doccano_client.repositories.label_type import (
     CategoryTypeRepository,
     RelationTypeRepository,
     SpanTypeRepository,
+    ScaleTypeRepository,
 )
 from doccano_client.repositories.member import MemberRepository
 from doccano_client.repositories.metrics import MetricsRepository
@@ -61,6 +64,7 @@ from doccano_client.usecase.label import (
     SegmentUseCase,
     SpanUseCase,
     TextUseCase,
+    ScaleUseCase,
 )
 from doccano_client.usecase.label_type import LabelTypeUseCase
 from doccano_client.usecase.member import MemberUseCase
@@ -97,6 +101,7 @@ class DoccanoClient:
         self._category_type_repository = CategoryTypeRepository(self._base_repository)
         self._span_type_repository = SpanTypeRepository(self._base_repository)
         self._relation_type_repository = RelationTypeRepository(self._base_repository)
+        self._scale_type_repository = ScaleTypeRepository(self._base_repository)
 
         # label repositories
         self._category_repository = CategoryRepository(self._base_repository)
@@ -105,6 +110,7 @@ class DoccanoClient:
         self._segment_repository = SegmentRepository(self._base_repository)
         self._bounding_box_repository = BoundingBoxRepository(self._base_repository)
         self._text_repository = TextRepository(self._base_repository)
+        self._scale_repository = ScaleRepository(self._base_repository)
 
         self._task_status_repository = TaskStatusRepository(self._base_repository)
         self._data_import_repository = DataUploadRepository(self._base_repository)
@@ -151,6 +157,11 @@ class DoccanoClient:
         return LabelTypeUseCase(self._relation_type_repository, service)
 
     @property
+    def scale_type(self) -> LabelTypeUseCase:
+        service = LabelTypeService(self._scale_type_repository)
+        return LabelTypeUseCase(self._scale_type_repository, service)
+
+    @property
     def data_import(self) -> DataUploadUseCase:
         return DataUploadUseCase(self._data_import_repository, self._task_status_repository)
 
@@ -175,6 +186,10 @@ class DoccanoClient:
         return RelationUseCase(self._relation_repository, self._relation_type_repository)
 
     @property
+    def scale(self) -> ScaleUseCase:
+        return ScaleUseCase(self._scale_repository, self._scale_type_repository)
+
+    @property
     def segment(self) -> SegmentUseCase:
         return SegmentUseCase(self._segment_repository, self._category_type_repository)
 
@@ -190,13 +205,15 @@ class DoccanoClient:
     def user_details(self) -> UserDetailsUseCase:
         return UserDetailsUseCase(self._user_details_repository)
 
-    def _get_label_type_usecase(self, type: Literal["category", "span", "relation"]) -> LabelTypeUseCase:
+    def _get_label_type_usecase(self, type: Literal["category", "span", "relation", "scale"]) -> LabelTypeUseCase:
         if type == "category":
             return self.category_type
         elif type == "span":
             return self.span_type
         elif type == "relation":
             return self.relation_type
+        elif type == "scale":
+            return self.scale_type
         else:
             raise ValueError(f"Invalid type: {type}")
 
@@ -320,13 +337,13 @@ class DoccanoClient:
         return self._metrics_repository.get_members_progress(project_id)
 
     def get_label_distribution(
-        self, project_id: int, type: Literal["category", "span", "relation"]
+        self, project_id: int, type: Literal["category", "span", "relation", "scale"]
     ) -> List[LabelDistribution]:
         """Return label distribution.
 
         Args:
             project_id (int): The id of the project.
-            type (Literal["category", "span", "relation"]): The type of the label.
+            type (Literal["category", "span", "relation", "scale"]): The type of the label.
 
         Returns:
             LabelDistribution: The label distribution.
@@ -340,6 +357,8 @@ class DoccanoClient:
             return self._metrics_repository.get_span_distribution(project_id)
         elif type == "relation":
             return self._metrics_repository.get_relation_distribution(project_id)
+        elif type == "scale":
+            return self._metrics_repository.get_scale_distribution(project_id)
         else:
             raise ValueError(f"Invalid type: {type}")
 
@@ -476,12 +495,12 @@ class DoccanoClient:
         """
         self.project.delete(project_id)
 
-    def list_label_types(self, project_id: int, type: Literal["category", "span", "relation"]) -> List[LabelType]:
+    def list_label_types(self, project_id: int, type: Literal["category", "span", "relation", "scale"]) -> List[LabelType]:
         """Return all label types in a project.
 
         Args:
             project_id (int): The project id.
-            type (Literal["category", "span", "relation"]): The type of the label type.
+            type (Literal["category", "span", "relation", "scale"]): The type of the label type.
 
         Returns:
             List[LabelType]: The list of label types.
@@ -489,14 +508,14 @@ class DoccanoClient:
         return self._get_label_type_usecase(type).list(project_id)
 
     def find_label_type_by_id(
-        self, project_id: int, label_type_id: int, type: Literal["category", "span", "relation"]
+        self, project_id: int, label_type_id: int, type: Literal["category", "span", "relation", "scale"]
     ) -> LabelType:
         """Find a label type by id.
 
         Args:
             project_id (int): The project id.
             label_type_id (int): The label type id.
-            type (Literal["category", "span", "relation"]): The type of the label type.
+            type (Literal["category", "span", "relation", "scale"]): The type of the label type.
 
         Returns:
             LabelType: The found label type.
@@ -506,7 +525,7 @@ class DoccanoClient:
     def create_label_type(
         self,
         project_id: int,
-        type: Literal["category", "span", "relation"],
+        type: Literal["category", "span", "relation", "scale"],
         text: str,
         prefix_key: PREFIX_KEY = None,
         suffix_key: SUFFIX_KEY = None,
@@ -537,7 +556,7 @@ class DoccanoClient:
         self,
         project_id: int,
         label_type_id: int,
-        type: Literal["category", "span", "relation"],
+        type: Literal["category", "span", "relation", "scale"],
         text: str = None,
         prefix_key: PREFIX_KEY | int = -1,
         suffix_key: SUFFIX_KEY | int = -1,
@@ -548,7 +567,7 @@ class DoccanoClient:
         Args:
             project_id (int): The project id.
             label_type_id (int): The label type id.
-            type (Literal["category", "span", "relation"]): The type of the label type.
+            type (Literal["category", "span", "relation", "scale"]): The type of the label type.
             text (str): The name of the label type.
             prefix_key (PREFIX_KEY): The prefix key of the label type.
             suffix_key (SUFFIX_KEY): The suffix key of the label type.
@@ -566,35 +585,35 @@ class DoccanoClient:
             color=color,
         )
 
-    def delete_label_type(self, project_id: int, label_type_id: int, type: Literal["category", "span", "relation"]):
+    def delete_label_type(self, project_id: int, label_type_id: int, type: Literal["category", "span", "relation", "scale"]):
         """Delete a label type.
 
         Args:
             project_id (int): The project id.
             label_type_id (int): The label type id.
-            type (Literal["category", "span", "relation"]): The type of the label type.
+            type (Literal["category", "span", "relation", "scale"]): The type of the label type.
         """
         self._get_label_type_usecase(type).delete(project_id, label_type_id)
 
     def bulk_delete_label_types(
-        self, project_id: int, label_type_ids: List[int], type: Literal["category", "span", "relation"]
+        self, project_id: int, label_type_ids: List[int], type: Literal["category", "span", "relation", "scale"]
     ):
         """Delete multiple label types.
 
         Args:
             project_id (int): The project id.
             label_type_ids (List[int]): The label type ids.
-            type (Literal["category", "span", "relation"]): The type of the label type.
+            type (Literal["category", "span", "relation", "scale"]): The type of the label type.
         """
         self._get_label_type_usecase(type).bulk_delete(project_id, label_type_ids)
 
-    def upload_label_type(self, project_id: int, file_path: str, type: Literal["category", "span", "relation"]):
+    def upload_label_type(self, project_id: int, file_path: str, type: Literal["category", "span", "relation", "scale"]):
         """Upload a label type.
 
         Args:
             project_id (int): The id of the project.
             file_path (str): The path to the file to upload.
-            type (Literal["category", "span", "relation"]): The type of the label type.
+            type (Literal["category", "span", "relation", "scale"]): The type of the label type.
         """
         self._get_label_type_usecase(type).upload(project_id, file_path)
 
@@ -986,6 +1005,19 @@ class DoccanoClient:
         """
         return self.bounding_box.find_by_id(project_id, example_id, label_id)
 
+    def find_scale_by_id(self, project_id: int, example_id: int, label_id: int) -> Scale:
+        """Find a scale by id.
+
+        Args:
+            project_id (int): The id of the project to find.
+            example_id (int): The id of the example.
+            label_id (int): The id of the label.
+
+        Returns:
+            Scale: The found scale.
+        """
+        return self.scale.find_by_id(project_id, example_id, label_id)
+
     def list_categories(self, project_id: int, example_id: int) -> List[Category]:
         """Return all categories.
 
@@ -1058,6 +1090,18 @@ class DoccanoClient:
         """
         return self.bounding_box.list(project_id, example_id)
 
+    def list_scales(self, project_id: int, example_id: int) -> List[Scale]:
+        """Return all scales.
+
+        Args:
+            project_id (int): The id of the project.
+            example_id (int): The id of the example.
+
+        Returns:
+            List[Scale]: The scales in the project.
+        """
+        return self.scale.list(project_id, example_id)
+
     def delete_category(self, project_id: int, example_id: int, label_id: int):
         """Delete a category.
 
@@ -1118,6 +1162,16 @@ class DoccanoClient:
         """
         self.bounding_box.delete(project_id, example_id, label_id)
 
+    def delete_scale(self, project_id: int, example_id: int, label_id: int):
+        """Delete a scale.
+
+        Args:
+            project_id (int): The project id.
+            example_id (int): The id of the example.
+            label_id (int): The label id.
+        """
+        self.scale.delete(project_id, example_id, label_id)
+
     def delete_all_categories(self, project_id: int, example_id: int):
         """Delete all categories.
 
@@ -1171,6 +1225,15 @@ class DoccanoClient:
             example_id (int): The id of the example.
         """
         self.bounding_box.delete_all(project_id, example_id)
+
+    def delete_all_scales(self, project_id: int, example_id: int):
+        """Delete all scales.
+
+        Args:
+            project_id (int): The id of the project.
+            example_id (int): The id of the example.
+        """
+        self.scale.delete_all(project_id, example_id)
 
     def create_category(
         self, project_id: int, example_id: int, label: int | str, human_annotated=False, confidence=0.0
@@ -1316,6 +1379,30 @@ class DoccanoClient:
             Segment: The created segment label.
         """
         return self.segment.create(project_id, example_id, points, label, human_annotated, confidence)
+
+    def create_scale(
+        self,
+        project_id: int,
+        example_id: int,
+        scale: int,
+        label: int | str,
+        human_annotated: bool = False,
+        confidence: float = 0.0,
+    ) -> Scale:
+        """Create a new scale label.
+
+        Args:
+            project_id (int): The id of the project.
+            example_id (int): The id of the example.
+            scale (int): The scale of the scale label.
+            label (int | str): The label to create.
+            human_annotated (bool): Whether the label is human annotated. Defaults to False.
+            confidence (float): The confidence of the label. Defaults to 0.0.
+
+        Returns:
+            Scale: The created scale label.
+        """
+        return self.scale.create(project_id, example_id, scale, label, human_annotated, confidence)
 
     def update_category(
         self,
@@ -1484,3 +1571,29 @@ class DoccanoClient:
             Segment: The updated segment label.
         """
         return self.segment.update(project_id, example_id, label_id, points, label, human_annotated, confidence)
+
+    def update_scale(
+        self,
+        project_id: int,
+        example_id: int,
+        label_id: int,
+        scale: Optional[int] = None,
+        label: Optional[int | str] = None,
+        human_annotated: bool = None,
+        confidence: float = None,
+    ) -> Scale:
+        """Update a scale label.
+
+        Args:
+            project_id (int): The id of the project.
+            example_id (int): The id of the example.
+            label_id (int): The id of the label.
+            points (List[float]): The points of the scale.
+            label (int | str): The label to create.
+            human_annotated (bool): Whether the label is human annotated. Defaults to None.
+            confidence (float): The confidence of the label. Defaults to None.
+
+        Returns:
+            Scale: The updated scale label.
+        """
+        return self.scale.update(project_id, example_id, label_id, scale, label, human_annotated, confidence)

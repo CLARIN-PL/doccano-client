@@ -140,3 +140,4 @@ class LabelTypeRepository:
 CategoryTypeRepository = functools.partial(LabelTypeRepository, resource_type="category-type")
 SpanTypeRepository = functools.partial(LabelTypeRepository, resource_type="span-type")
 RelationTypeRepository = functools.partial(LabelTypeRepository, resource_type="relation-type")
+ScaleTypeRepository = functools.partial(LabelTypeRepository, resource_type="scale-type")

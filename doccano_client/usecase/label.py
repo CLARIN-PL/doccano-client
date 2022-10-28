@@ -10,6 +10,7 @@ from doccano_client.models.label import (
     Segment,
     Span,
     Text,
+    Scale,
 )
 from doccano_client.repositories.label import LabelRepository
 from doccano_client.repositories.label_type import LabelTypeRepository
@@ -587,3 +588,92 @@ class SegmentUseCase(LabelUseCase[Segment]):
             prob=confidence or segment.prob,
         )
         return self._repository.update(project_id, segment)
+
+
+class ScaleUseCase(LabelUseCase[Scale]):
+    def create(
+        self,
+        project_id: int,
+        example_id: int,
+        scale: int,
+        label: int | str,
+        human_annotated: bool = False,
+        confidence: float = 0.0,
+    ) -> Scale:
+        """Create a new scale label
+
+        Args:
+            project_id (int): The id of the project
+            example_id (int): The id of the example
+            scale (int): The scale of the label
+            label (int | str): The label to create
+            human_annotated (bool): Whether the label is human annotated. Defaults to False.
+            confidence (float): The confidence of the label. Defaults to 0.0.
+
+        Returns:
+            Scale: The created scale label
+
+        Raises:
+            ValueError: If the label type repository is not set
+        """
+        if self._label_type_repository is None:
+            raise ValueError("LabelTypeRepository is not set")
+
+        if isinstance(label, str):
+            label_type = self._label_type_repository.find_by_name(project_id, label)
+            label = label_type.id  # type: ignore
+
+        scale = Scale(
+            example=example_id,
+            scale=scale,
+            label=label,
+            manual=human_annotated,
+            prob=confidence,
+        )
+        return self._repository.create(project_id, scale)
+
+    def update(
+        self,
+        project_id: int,
+        example_id: int,
+        label_id: int,
+        scale: Optional[int] = None,
+        label: Optional[int | str] = None,
+        human_annotated: bool = None,
+        confidence: float = None,
+    ) -> Scale:
+        """Update a scale label
+
+        Args:
+            project_id (int): The id of the project
+            example_id (int): The id of the example
+            label_id (int): The id of the label
+            scale (int): The scale of the label
+            label (int | str): The label to create
+            human_annotated (bool): Whether the label is human annotated. Defaults to False.
+            confidence (float): The confidence of the label. Defaults to
+            
+            Returns:
+                Scale: The updated scale label
+    
+            Raises:
+                ValueError: If the label type repository is not set
+        """
+        if self._label_type_repository is None:
+            raise ValueError("LabelTypeRepository is not set")
+
+        scale = self.find_by_id(project_id, example_id, label_id)
+
+        if isinstance(label, str):
+            label_type = self._label_type_repository.find_by_name(project_id, label)
+            label = label_type.id
+
+        scale = Scale(
+            id=scale.id,
+            example=example_id,
+            scale=scale or scale.scale,
+            label=label or scale.label,
+            manual=human_annotated or scale.manual,
+            prob=confidence or scale.prob,
+        )
+        return self._repository.update(project_id, scale)

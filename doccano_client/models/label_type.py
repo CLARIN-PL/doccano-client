@@ -96,3 +96,4 @@ class LabelType(BaseModel):
 CategoryType = LabelType
 SpanType = LabelType
 RelationType = LabelType
+ScaleType = LabelType

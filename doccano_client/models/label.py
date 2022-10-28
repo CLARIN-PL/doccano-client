@@ -65,3 +65,11 @@ class Segment(Label):
 
 class Text(Label):
     text: str
+
+
+class Scale(Label):
+    label: int
+    scale: int
+
+    def to_tuple(self) -> tuple:
+        return self.scale, self.label
