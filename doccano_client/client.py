@@ -380,6 +380,7 @@ class DoccanoClient:
         is_humor_mode: bool = False,
         is_others_mode: bool = False,
         is_single_ann_view: bool = True,
+        is_combination_mode: bool = False,
         tags: Optional[List[str]] = None,
     ) -> Project:
         """Create a new project. `ProjectType` is one of the
@@ -420,6 +421,7 @@ class DoccanoClient:
             is_humor_mode=is_humor_mode,
             is_others_mode=is_others_mode,
             is_single_ann_view=is_single_ann_view,
+            is_combination_mode=is_combination_mode,
             tags=tags,
         )
 
@@ -442,6 +444,7 @@ class DoccanoClient:
         is_humor_mode: bool = None,
         is_others_mode: bool = None,
         is_single_ann_view: bool = None,
+        is_combination_mode: bool = None,
         tags: Optional[List[str]] = None,
     ) -> Project:
         """Update a project. `ProjectType` is one of the
@@ -484,6 +487,7 @@ class DoccanoClient:
             is_humor_mode=is_humor_mode,
             is_others_mode=is_others_mode,
             is_single_ann_view=is_single_ann_view,
+            is_combination_mode=is_combination_mode,
             tags=tags,
         )
 

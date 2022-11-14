@@ -57,6 +57,7 @@ class Project(BaseModel):
     is_humor_mode: bool = False
     is_others_mode: bool = False
     is_single_ann_view: bool = True
+    is_combination_mode: bool = False
     tags: List[str] = []
 
     def dict(

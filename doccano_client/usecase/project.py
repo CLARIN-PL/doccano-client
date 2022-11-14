@@ -59,6 +59,7 @@ class ProjectUseCase:
         is_humor_mode: bool = False,
         is_others_mode: bool = False,
         is_single_ann_view: bool = True,
+        is_combination_mode: bool = False,
         tags: Optional[List[str]] = None,
     ) -> Project:
         """Create a new project
@@ -96,6 +97,7 @@ class ProjectUseCase:
             is_humor_mode=is_humor_mode,
             is_others_mode=is_others_mode,
             is_single_ann_view=is_single_ann_view,
+            is_combination_mode=is_combination_mode,
             tags=tags or [],
         )
         return self._repository.create(project)
@@ -119,6 +121,7 @@ class ProjectUseCase:
         is_humor_mode: bool = False,
         is_others_mode: bool = False,
         is_single_ann_view: bool = True,
+        is_combination_mode: bool = False,
         tags: Optional[List[str]] = None,
     ) -> Project:
         """Update a project
@@ -163,8 +166,10 @@ class ProjectUseCase:
             is_humor_mode=is_humor_mode if is_humor_mode is not None else project.is_humor_mode,
             is_others_mode=is_others_mode if is_others_mode is not None else project.is_others_mode,
             is_single_ann_view=is_single_ann_view if is_single_ann_view is not None else project.is_single_ann_view,
+            is_combination_mode=is_combination_mode if is_combination_mode is not None else project.is_combination_mode,
             tags=tags or [],
         )
+        print(project.is_combination_mode)
         return self._repository.update(project)
 
     def delete(self, project_id: int):

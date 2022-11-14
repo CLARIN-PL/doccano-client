@@ -18,6 +18,8 @@ ADMIN_PASSWORD = 'password'
 BASE_URL = 'http://localhost:8000'
 ANNOTATION_MODES = ['OthersAnnotation', 'HumorAnnotation', 'OffensiveAnnotation', 'EmotionsAnnotation', 'SummaryAnnotation']
 
+IS_MULTI_DIMENSION = True
+
 LIST_DATA_FILES = os.listdir(DATA_DIR)
 LIST_LABEL_FILES = os.listdir(LABEL_DIR)
 LABELS_CONFIG_MAPPING = dict(zip(ANNOTATION_MODES[:-1], LIST_LABEL_FILES))
@@ -39,7 +41,7 @@ def create_users():
     return list_users
 
 
-def processing(idx, annotation_mode, usernames):
+def single_dimension_process(idx, annotation_mode, usernames):
     if annotation_mode=='SummaryAnnotation':
         client.create_project(name="{}_{}".format(LIST_DATA_FILES[idx].split('.')[0], annotation_mode), project_type=PROJECT_TYPE, description="Affective Annotation Summary mode", is_summary_mode=True, is_single_ann_view=True)
     elif annotation_mode=='EmotionsAnnotation':
@@ -58,12 +60,26 @@ def processing(idx, annotation_mode, usernames):
     for user in usernames:
         client.add_member(project_id=current_project_id, username=user, role_name=USER_ROLE)
 
+
+def multi_dimension_process(idx, usernames):
+    client.create_project(name="{}_{}".format(LIST_DATA_FILES[idx].split('.')[0], 'AffectiveAnnotation'), project_type=PROJECT_TYPE, description="Affective Annotation Multi-dimension mode", is_combination_mode=True, is_single_ann_view=True)
+    current_project_id = list(client.list_projects())[-1].id
+    client.upload(project_id=current_project_id, file_paths=[os.path.join(DATA_DIR, LIST_DATA_FILES[idx])], task=PROJECT_TYPE, format=DATA_FORMAT, column_data=COLUMN_DATA, column_label=COLUMN_LABEL)
+    for file in LIST_LABEL_FILES:
+        client.upload_label_type(project_id=current_project_id, file_path=os.path.join(LABEL_DIR, file), type='scale')
+    for user in usernames:
+        client.add_member(project_id=current_project_id, username=user, role_name=USER_ROLE)
+
+
 def main():
     usernames = create_users()
     for idx in range(len(LIST_DATA_FILES)):
-        for annotation_mode in ANNOTATION_MODES:
-            processing(idx, annotation_mode, usernames)
-    print("Finished creating projects, users and uploading data, labels. Assigning users to projects...")
+        if IS_MULTI_DIMENSION:
+            multi_dimension_process(idx, usernames)
+        else:
+            for annotation_mode in ANNOTATION_MODES:
+                single_dimension_process(idx, annotation_mode, usernames)
+        print("Finished creating projects, users and uploading data, labels. Assigning users to projects...")
 
 if __name__ == '__main__':
     main()
