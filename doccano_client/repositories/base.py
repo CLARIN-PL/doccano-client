@@ -112,6 +112,8 @@ class BaseRepository:
         """
         if resource.startswith(self.api_url):
             resource = resource[len(self.api_url) + 1 :]
+        elif resource.startswith('http:' + self.api_url.split(':')[-1]):
+            resource = resource[len('http:' + self.api_url.split(':')[-1]) + 1 :]
         url = f"{self.api_url}/{resource}"
         response = self._session.get(url, **kwargs)
         verbose_raise_for_status(response)
