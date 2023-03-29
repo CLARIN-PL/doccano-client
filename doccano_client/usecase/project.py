@@ -61,6 +61,7 @@ class ProjectUseCase:
         is_single_ann_view: bool = True,
         is_combination_mode: bool = False,
         tags: Optional[List[str]] = None,
+        dimension: Optional[List[dict]] = None,
     ) -> Project:
         """Create a new project
 
@@ -99,6 +100,7 @@ class ProjectUseCase:
             is_single_ann_view=is_single_ann_view,
             is_combination_mode=is_combination_mode,
             tags=tags or [],
+            dimension=dimension or [],
         )
         return self._repository.create(project)
 
@@ -123,6 +125,7 @@ class ProjectUseCase:
         is_single_ann_view: bool = True,
         is_combination_mode: bool = False,
         tags: Optional[List[str]] = None,
+        dimension: Optional[List[dict]] = None,
     ) -> Project:
         """Update a project
 
@@ -168,6 +171,7 @@ class ProjectUseCase:
             is_single_ann_view=is_single_ann_view if is_single_ann_view is not None else project.is_single_ann_view,
             is_combination_mode=is_combination_mode if is_combination_mode is not None else project.is_combination_mode,
             tags=tags or [],
+            dimension=dimension or [],
         )
         print(project.is_combination_mode)
         return self._repository.update(project)

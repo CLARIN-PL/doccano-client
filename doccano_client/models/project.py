@@ -26,6 +26,7 @@ class ProjectType(str, Enum):
     INTENT_DETECTION_AND_SLOT_FILLING = "IntentDetectionAndSlotFilling"
     ARTICLE_ANNOTATION = "ArticleAnnotation"
     AFFECTIVE_ANNOTATION = "AffectiveAnnotation"
+    DYNAMIC_ANNOTATION = "DynamicAnnotation"
 
 
 class Name(ConstrainedStr):
@@ -59,6 +60,7 @@ class Project(BaseModel):
     is_single_ann_view: bool = True
     is_combination_mode: bool = False
     tags: List[str] = []
+    dimension: List[Dict] = []
 
     def dict(
         self,
@@ -98,5 +100,6 @@ class Project(BaseModel):
             ProjectType.INTENT_DETECTION_AND_SLOT_FILLING: "IntentDetectionAndSlotFillingProject",
             ProjectType.ARTICLE_ANNOTATION: "ArticleAnnotationProject",
             ProjectType.AFFECTIVE_ANNOTATION: "AffectiveAnnotationProject",
+            ProjectType.DYNAMIC_ANNOTATION: "DynamicAnnotationProject",
         }
         return PROJECT_TO_RESOURCE_TYPE[self.project_type]
