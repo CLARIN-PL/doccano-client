@@ -383,6 +383,7 @@ class DoccanoClient:
         is_combination_mode: bool = False,
         tags: Optional[List[str]] = None,
         dimension: Optional[List[Dict]] = None,
+        package_data_type: bool = False,
     ) -> Project:
         """Create a new project. `ProjectType` is one of the
         `DocumentClassification`, `SequenceLabeling`, `Seq2seq`, `Speech2text`,
@@ -425,6 +426,7 @@ class DoccanoClient:
             is_combination_mode=is_combination_mode,
             tags=tags,
             dimension=dimension,
+            package_data_type=package_data_type,
         )
 
     def update_project(
@@ -449,6 +451,7 @@ class DoccanoClient:
         is_combination_mode: bool = None,
         tags: Optional[List[str]] = None,
         dimension: Optional[List[Dict]] = None,
+        package_data_type: bool = None,
     ) -> Project:
         """Update a project. `ProjectType` is one of the
         `DocumentClassification`, `SequenceLabeling`, `Seq2seq`, `Speech2text`,
@@ -493,6 +496,7 @@ class DoccanoClient:
             is_combination_mode=is_combination_mode,
             tags=tags,
             dimension=dimension,
+            package_data_type=package_data_type,
         )
 
     def delete_project(self, project_id: int):

@@ -61,6 +61,7 @@ class Project(BaseModel):
     is_combination_mode: bool = False
     tags: List[str] = []
     dimension: List[Dict] = []
+    package_data_type = False
 
     def dict(
         self,

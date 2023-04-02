@@ -62,6 +62,7 @@ class ProjectUseCase:
         is_combination_mode: bool = False,
         tags: Optional[List[str]] = None,
         dimension: Optional[List[dict]] = None,
+        package_data_type:bool = False,
     ) -> Project:
         """Create a new project
 
@@ -101,6 +102,7 @@ class ProjectUseCase:
             is_combination_mode=is_combination_mode,
             tags=tags or [],
             dimension=dimension or [],
+            package_data_type=package_data_type,
         )
         return self._repository.create(project)
 
@@ -126,6 +128,7 @@ class ProjectUseCase:
         is_combination_mode: bool = False,
         tags: Optional[List[str]] = None,
         dimension: Optional[List[dict]] = None,
+        package_data_type:bool = False,
     ) -> Project:
         """Update a project
 
@@ -172,6 +175,7 @@ class ProjectUseCase:
             is_combination_mode=is_combination_mode if is_combination_mode is not None else project.is_combination_mode,
             tags=tags or [],
             dimension=dimension or [],
+            package_data_type=package_data_type if package_data_type is not None else project.package_data_type,
         )
         print(project.is_combination_mode)
         return self._repository.update(project)
