@@ -25,6 +25,8 @@ from doccano_client.models.role import Role
 from doccano_client.models.task_status import TaskStatus
 from doccano_client.models.user import User
 from doccano_client.models.user_details import PasswordUpdated, UserDetails
+from doccano_client.models.dimension import Dimension
+
 from doccano_client.repositories.base import BaseRepository
 from doccano_client.repositories.comment import CommentRepository
 from doccano_client.repositories.data_download import DataDownloadRepository
@@ -52,6 +54,8 @@ from doccano_client.repositories.role import RoleRepository
 from doccano_client.repositories.task_status import TaskStatusRepository
 from doccano_client.repositories.user import UserRepository
 from doccano_client.repositories.user_details import UserDetailsRepository
+from doccano_client.repositories.dimension import DimensionRepository
+
 from doccano_client.services.label_type import LabelTypeService
 from doccano_client.usecase.comment import CommentUseCase
 from doccano_client.usecase.data_download import DataDownloadUseCase
@@ -70,6 +74,7 @@ from doccano_client.usecase.label_type import LabelTypeUseCase
 from doccano_client.usecase.member import MemberUseCase
 from doccano_client.usecase.project import ProjectType, ProjectUseCase
 from doccano_client.usecase.user_details import UserDetailsUseCase
+from doccano_client.usecase.dimension import DimensionUseCase
 
 
 class DoccanoClient:
@@ -96,6 +101,7 @@ class DoccanoClient:
         self._example_repository = ExampleRepository(self._base_repository)
         self._comment_repository = CommentRepository(self._base_repository)
         self._member_repository = MemberRepository(self._base_repository)
+        self._dimension_repository = DimensionRepository(self._base_repository)
 
         # label type repositories
         self._category_type_repository = CategoryTypeRepository(self._base_repository)
@@ -204,6 +210,10 @@ class DoccanoClient:
     @property
     def user_details(self) -> UserDetailsUseCase:
         return UserDetailsUseCase(self._user_details_repository)
+
+    @property
+    def dimension(self) -> DimensionUseCase:
+        return DimensionUseCase(self._dimension_repository)
 
     def _get_label_type_usecase(self, type: Literal["category", "span", "relation", "scale"]) -> LabelTypeUseCase:
         if type == "category":
@@ -506,6 +516,29 @@ class DoccanoClient:
             project_id (int): The project id.
         """
         self.project.delete(project_id)
+
+    def list_dimensions(self, project_id: int) -> List[Dimension]:
+        """Return all dimensions in a project.
+
+        Args:
+            project_id (int): The project id.
+
+        Returns:
+            List[Dimension]: The list of dimensions.
+        """
+        return self.dimension.list(project_id)
+    
+    def create_dimension(self, project_id: int, dimension: List) -> Dimension:
+        """Create a dimension.
+
+        Args:
+            project_id (int): The project id.
+            dimension (int): The dimension.
+
+        Returns:
+            Dimension: The created dimension.
+        """
+        return self.dimension.create(project_id, dimension)
 
     def list_label_types(self, project_id: int, type: Literal["category", "span", "relation", "scale"]) -> List[LabelType]:
         """Return all label types in a project.
